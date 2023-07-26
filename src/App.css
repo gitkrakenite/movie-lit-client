@@ -1,0 +1,17 @@
+.text-btn {
+  /* trbl */
+  padding: 18px 38px 18px 38px;
+
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.text-btn:hover {
+  /* trbl */
+  border-radius: 10px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 0px;
+}
