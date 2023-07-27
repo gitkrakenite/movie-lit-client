@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-// import axios from "../axios";
+import axios from "../axios";
 import { toast } from "react-toastify";
 
 import { Link, useParams } from "react-router-dom";
@@ -9,48 +9,36 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FiArrowUpRight } from "react-icons/fi";
 
 import Spinner from "../components/Spinner";
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Comment from "../components/Comment";
-import { SingleDummy } from "../dummyData";
+import moment from "moment";
 
 const Movie = () => {
-  const [activeImg, setActiveImg] = useState(null);
-
-  const checkTheMainPhoto = (url) => {
-    setActiveImg(url);
-  };
-
-  useEffect(() => {
-    checkTheMainPhoto();
-  }, []);
-
-  let user = true;
-
-  //   const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   // fetch the post
   const { id } = useParams();
-  const [singleReview, setSingleReview] = useState([]);
+  const [singleScene, setSingleScene] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  //   const fetchReview = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const response = await axios.get("/reviews/" + id);
-  //       if (response) {
-  //         setLoading(false);
-  //         setSingleReview([response.data]);
-  //       }
-  //     } catch (error) {
-  //       setLoading(false);
-  //       toast.error("Error Fetching Review.");
-  //       toast.error("Network error or doesn't exist");
-  //     }
-  //   };
+  const fetchScene = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/scene/" + id);
+      if (response) {
+        setLoading(false);
+        setSingleScene([response.data]);
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error("Error Fetching Scene.");
+      toast.error("Network error or doesn't exist");
+    }
+  };
 
-  //   useEffect(() => {
-  //     fetchReview();
-  //   }, []);
+  useEffect(() => {
+    fetchScene();
+  }, []);
 
   // const [allPosts, setAllPosts] = useState([]);
 
@@ -81,17 +69,17 @@ const Movie = () => {
         </p>
       </Link>
 
-      {/* review */}
+      {/* scene */}
       {loading ? (
         <div className="h-[63vh] w-full flex items-center justify-center">
-          <Spinner message="Loading Review" />
+          <Spinner message="Loading Scene" />
         </div>
       ) : (
         <div className="">
-          {SingleDummy?.map((item) => (
+          {singleScene?.map((item) => (
             <div key={item.id} className="">
               <div className="flex flex-col xl:flex-row gap-[20px] items-center xl:items-start">
-                {/* image side */}
+                {/* video side */}
                 <div className=" w-full xl:flex-[0.5]">
                   <iframe
                     className="w-full h-[500px] md:h-[740px] "
@@ -114,22 +102,34 @@ const Movie = () => {
 
                     <div className="flex justify-between gap-[20px] flex-wrap mb-[15px]">
                       <div className="flex items-center gap-[10px] text-emerald-700 hover:text-emerald-500">
-                        <a href={`${item.trailer}`}>Watch Trailer</a>
+                        <a
+                          href={`${item.trailer}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Watch Trailer
+                        </a>
                         <FiArrowUpRight />
                       </div>
                       <div className="flex items-center gap-[10px] text-emerald-700 hover:text-emerald-500">
-                        <a href={`${item.movieLink}`}>Watch Movie</a>
+                        <a
+                          href={`${item.movieLink}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Watch Movie
+                        </a>
                         <FiArrowUpRight />
                       </div>
                     </div>
 
                     <div className="flex justify-between md:gap-[25px] gap-[10px] flex-wrap mb-[15px]">
-                      <p>Posted By : {item.creator}</p>
-                      {/* <p>
-                      {" "}
-                      <span className="text-lg text-orange-600">@</span>{" "}
-                      {moment(item.createdAt).fromNow()}
-                    </p> */}
+                      <p>Added By : {item.creator}</p>
+                      <p className="text-sm">
+                        {" "}
+                        <span className="text-sm text-orange-600">@</span>{" "}
+                        {moment(item.createdAt).fromNow()}
+                      </p>
                     </div>
                   </div>
 

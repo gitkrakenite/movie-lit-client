@@ -1,4 +1,3 @@
-import Masonry from "react-masonry-css";
 import {
   AiOutlineArrowUp,
   AiOutlineComment,
@@ -8,23 +7,16 @@ import {
 import { BsArrowUpRightCircle } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { DummyMovies, SingleDummy } from "../dummyData";
 import Spinner from "../components/Spinner";
 import "./home.css";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/auth/authSlice";
+import axios from "../axios";
+import { toast } from "react-toastify";
+import moment from "moment";
 
 const Home = () => {
-  const breakpointColumnsObj = {
-    default: 4,
-    3000: 6,
-    2000: 5,
-    1200: 3,
-    1000: 2,
-    500: 1,
-  };
-
-  const { user } = useSelector((state) => state.auth);
+  // const { user } = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -51,6 +43,29 @@ const Home = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // fetch reviews
+  const [loading, setLoading] = useState(false);
+  const [scenes, setScenes] = useState([]);
+
+  const handleFetch = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/scene");
+      if (response) {
+        setLoading(false);
+        setScenes(response.data);
+      }
+      setLoading(false);
+    } catch (error) {
+      toast.error("Network Error");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleFetch();
+  }, []);
+
   // search  states
   const [searchText, setSearchText] = useState("");
   const [searchTimeout, setsearchTimeout] = useState(null);
@@ -68,7 +83,7 @@ const Home = () => {
 
     setsearchTimeout(
       setTimeout(() => {
-        const searchResults = DummyMovies?.filter(
+        const searchResults = scenes?.filter(
           (item) =>
             item.title.toLowerCase().includes(searchText.toLowerCase()) ||
             item.category.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -84,8 +99,6 @@ const Home = () => {
     await dispatch(logout());
     navigate("/login");
   };
-
-  const [loading, setLoading] = useState("");
 
   return (
     <div>
@@ -187,8 +200,8 @@ const Home = () => {
                   <>
                     <div className="iframeWrapper ">
                       {searchedResults?.map((item) => (
-                        <div key={item.id} className="iframeItem bg-zinc-900">
-                          <Link to={`/review/${item.id}`}>
+                        <div key={item._id} className="iframeItem bg-zinc-900">
+                          <Link to={`/review/${item._id}`}>
                             <div>
                               <iframe
                                 className="w-full h-[400px] "
@@ -205,7 +218,7 @@ const Home = () => {
                                   <span className="text-sm">Reposted</span> :{" "}
                                   {item.creator}
                                 </p>
-                                <p>{item.createdAt}</p>
+                                <p>{moment(item.createdAt).fromNow()}</p>
                               </div>
                               <div className="flex justify-between items-center mt-[10px]">
                                 <p className="text-sm  text-emerald-500 font-bold">
@@ -236,14 +249,14 @@ const Home = () => {
             ) : (
               <>
                 {loading ? (
-                  <div className="mt-[5em]">
+                  <div className="h-[70vh] flex justify-center items-center">
                     <Spinner message="Fetching ..." />
                   </div>
                 ) : (
                   <div className="iframeWrapper ">
-                    {DummyMovies?.map((item) => (
-                      <div key={item.id} className="iframeItem bg-zinc-900">
-                        <Link to={`/review/${item.id}`}>
+                    {scenes?.map((item) => (
+                      <div key={item._id} className="iframeItem bg-zinc-900">
+                        <Link to={`/review/${item._id}`}>
                           <div>
                             <iframe
                               className="w-full h-[400px] "
@@ -260,7 +273,10 @@ const Home = () => {
                                 <span className="text-sm">Reposted</span> :{" "}
                                 {item.creator}
                               </p>
-                              <p>{item.createdAt}</p>
+                              <p className="text-sm">
+                                {" "}
+                                {moment(item.createdAt).fromNow()}
+                              </p>
                             </div>
                             <div className="flex justify-between items-center mt-[10px]">
                               <p className="text-sm  text-emerald-500 font-bold">

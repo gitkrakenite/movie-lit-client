@@ -1,11 +1,11 @@
 import { useState } from "react";
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-// import axios from "../axios";
-// import moment from "moment";
+import axios from "../axios";
+import moment from "moment";
 
 const Comment = ({ item }) => {
-  //   const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   // comment
   const [comment, setComment] = useState("");
@@ -20,11 +20,11 @@ const Comment = ({ item }) => {
 
       setLoadingComment(true);
 
-      //   let username = user.username;
+      let username = user.username;
       let id = product._id;
       let commentData = { username, comment };
 
-      //   await axios.post("/reviews/comment/" + id, commentData);
+      await axios.post("/scene/comment/" + id, commentData);
       setLoadingComment(false);
       setComment("");
       window.location.reload();
@@ -41,9 +41,8 @@ const Comment = ({ item }) => {
         <form onSubmit={() => handleComment(item)}>
           <div>
             <label htmlFor="comment" className="flex items-center gap-8">
-              <div className="w-[40px] h-[40px] bg-orange-700 rounded-full flex justify-center items-center text-zinc-200 text-xl">
-                {/* {user?.username.slice(0, 1)} */}
-                {item.creator.slice(0, 1)}
+              <div className="w-[35px] h-[32px] bg-orange-700 rounded-full flex justify-center items-center text-zinc-200 text-xl">
+                {user?.username.slice(0, 1)}
               </div>
 
               <p>Add A Comment</p>
@@ -94,7 +93,7 @@ const Comment = ({ item }) => {
                   <div className="flex flex-col md:flex-row justify-between  gap-[10px] md:gap-[40px] items-start md:items-center">
                     <p className="text-zinc-400 text-md">{item.comment}</p>
                     <p className="text-zinc-500 font-bold text-sm">
-                      {/* {moment(item.createdAt).fromNow()} */} 3 mins Ago
+                      {moment(item.createdAt).fromNow()}
                     </p>
                   </div>
                 </div>

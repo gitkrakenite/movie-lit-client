@@ -17,7 +17,7 @@ const Spinner = ({ message }) => {
         height="80"
         width="80"
         radius="9"
-        color="#0779ad"
+        color="#0e917f"
         ariaLabel="loading"
         wrapperStyle
         wrapperClass
