@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import bg from "../assets/mv3.jpg";
 
 const Landing = () => {
+  //  // have a function that clears localstorage
   return (
     <div>
       <div className="w-full h-[100vh]">
