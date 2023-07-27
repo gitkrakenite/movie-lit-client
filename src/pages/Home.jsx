@@ -64,7 +64,8 @@ const Home = () => {
         const searchResults = DummyMovies?.filter(
           (item) =>
             item.title.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.category.toLowerCase().includes(searchText.toLowerCase())
+            item.category.toLowerCase().includes(searchText.toLowerCase()) ||
+            item.description.toLowerCase().includes(searchText.toLowerCase())
         );
 
         setSearchedResults(searchResults);
