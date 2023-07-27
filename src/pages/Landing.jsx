@@ -1,8 +1,17 @@
 import { Link } from "react-router-dom";
 import bg from "../assets/mv3.jpg";
+import { useEffect } from "react";
 
 const Landing = () => {
   //  // have a function that clears localstorage
+  const handleClearUser = () => {
+    localStorage.removeItem("user");
+  };
+
+  useEffect(() => {
+    handleClearUser();
+  }, []);
+
   return (
     <div>
       <div className="w-full h-[100vh]">
@@ -37,6 +46,7 @@ const Landing = () => {
               to="/login"
               className="z-[999] text-lg"
               style={{ fontWeight: 600 }}
+              onClick={handleClearUser}
             >
               LOGIN
             </Link>
@@ -55,13 +65,17 @@ const Landing = () => {
           >
             Take a trip down memory lane by checking out famous clips
           </p>
-          <Link to="/register" className="mb-[2em]">
+          <Link to="/register" className="mb-[2em]" onClick={handleClearUser}>
             {/* border: 2px solid #0495ca; */}
             <p className="text-btn border-2 border-emerald-700">
               CREATE ACCOUNT
             </p>
           </Link>
-          <Link to="/home" className="hover:text-emerald-400">
+          <Link
+            to="/home"
+            className="hover:text-emerald-400"
+            onClick={handleClearUser}
+          >
             PROCEED WITHOUT ACCOUNT
           </Link>
         </div>

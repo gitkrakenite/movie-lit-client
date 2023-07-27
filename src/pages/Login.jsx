@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-// import { login, reset } from "../features/auth/authSlice";
+import { login, reset } from "../features/auth/authSlice";
 import Spinner from "../components/Spinner";
 
 const Login = () => {
@@ -12,31 +12,30 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  // const { user, isLoading, isError, isSuccess, message } = useSelector(
-  //   (state) => state.auth
-  // );
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
 
-  // useEffect(() => {
-  //   if (isError) {
-  //     toast.error("Please Check Login Details");
-  //     toast.error("Also Check Network");
-  //   }
+  useEffect(() => {
+    if (isError) {
+      toast.error("Please Check Login Details");
+      toast.error("Also Check Network");
+    }
 
-  //   if (user || isSuccess) {
-  //     navigate("/home");
+    if (user || isSuccess) {
+      navigate("/home");
+    }
 
-  //   }
+    if (navigator.onLine) {
+      console.log("online");
+    } else {
+      toast.error("Network Error");
+    }
 
-  //   if (navigator.onLine) {
-  //     console.log("online");
-  //   } else {
-  //     toast.error("Network Error");
-  //   }
-
-  //   dispatch(reset());
-  // }, [user, isError, isSuccess, message, isLoading, navigate, dispatch]);
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, isLoading, navigate, dispatch]);
 
   const [loading, setLoading] = useState(false);
 
@@ -48,7 +47,7 @@ const Login = () => {
       return toast.error("Please Fill All Fields", { theme: "dark" });
     }
     const userData = { username, password };
-    // dispatch(login(userData));
+    dispatch(login(userData));
     setLoading(false);
   };
 

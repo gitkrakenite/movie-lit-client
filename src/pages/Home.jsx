@@ -6,11 +6,13 @@ import {
   AiOutlineSearch,
 } from "react-icons/ai";
 import { BsArrowUpRightCircle } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { DummyMovies, SingleDummy } from "../dummyData";
 import Spinner from "../components/Spinner";
 import "./home.css";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../features/auth/authSlice";
 
 const Home = () => {
   const breakpointColumnsObj = {
@@ -21,6 +23,11 @@ const Home = () => {
     1000: 2,
     500: 1,
   };
+
+  const { user } = useSelector((state) => state.auth);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // scroll to top functionality
   const [showArrow, setShowArrow] = useState(false);
@@ -71,6 +78,11 @@ const Home = () => {
         setSearchedResults(searchResults);
       }, 500)
     );
+  };
+
+  const handleLogout = async () => {
+    await dispatch(logout());
+    navigate("/login");
   };
 
   const [loading, setLoading] = useState("");
@@ -131,12 +143,14 @@ const Home = () => {
                   <p
                     className="font-bold cursor-pointer hidden sm:block"
                     style={{ letterSpacing: "1px" }}
+                    onClick={handleLogout}
                   >
                     LOGOUT
                   </p>
                   <BsArrowUpRightCircle
                     className="text-2xl cursor-pointer sm:hidden"
                     title="logout"
+                    onClick={handleLogout}
                   />
                 </div>
               </div>

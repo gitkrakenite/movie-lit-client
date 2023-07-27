@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-// import { useSelector, useDispatch } from "react-redux";
-// import { register, reset } from "../features/auth/authSlice";
-// import axios from "../axios";
+import { useSelector, useDispatch } from "react-redux";
+import { register, reset } from "../features/auth/authSlice";
+import axios from "../axios";
 import Spinner from "../components/Spinner";
 
 const Register = () => {
@@ -15,30 +15,30 @@ const Register = () => {
   const [cpassword, setCPassword] = useState("");
 
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  // const { user, isError, isSuccess, message } = useSelector(
-  //   (state) => state.auth
-  // );
+  const { user, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
 
-  // useEffect(() => {
-  //   if (navigator.onLine) {
-  //     console.log("online");
-  //   } else {
-  //     toast.error("Network Error");
-  //   }
+  useEffect(() => {
+    if (navigator.onLine) {
+      console.log("online");
+    } else {
+      toast.error("Network Error");
+    }
 
-  //   if (isError) {
-  //     toast.error("Please Check Network");
-  //   }
+    if (isError) {
+      toast.error("Please Check Network");
+    }
 
-  //   if (isSuccess || user) {
-  //     toast.success("Welcome to rivvy.com!");
-  //     navigate("/home");
-  //   }
+    if (isSuccess || user) {
+      toast.success("Welcome to movyt!");
+      navigate("/home");
+    }
 
-  //   dispatch(reset());
-  // }, [user, isError, isSuccess, message, navigate, dispatch]);
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
 
   const [loading, setLoading] = useState(false);
 
@@ -51,23 +51,22 @@ const Register = () => {
       return toast.error("Password don't match", { theme: "dark" });
     }
 
-    // try {
-    //   const nameToCheck = { username };
-    //   const { data } = await axios.post("/users/check", nameToCheck);
-    //   if (data == "not exist") {
-
-    //     const userData = { username, email, password };
-    //     dispatch(register(userData));
-    //     setLoading(false);
-    //     return;
-    //   } else {
-    //     toast.error(`username ${username} exists.`);
-    //     setLoading(false);
-    //     return;
-    //   }
-    // } catch (error) {
-    //   toast.error("Failed To Register");
-    // }
+    try {
+      const nameToCheck = { username };
+      const { data } = await axios.post("/users/check", nameToCheck);
+      if (data == "not exist") {
+        const userData = { username, email, password };
+        dispatch(register(userData));
+        setLoading(false);
+        return;
+      } else {
+        toast.error(`username ${username} exists.`);
+        setLoading(false);
+        return;
+      }
+    } catch (error) {
+      toast.error("Failed To Register");
+    }
   };
 
   return (
