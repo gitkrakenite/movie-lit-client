@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Create from "./pages/Create";
+import Movie from "./pages/Movie";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create" element={<Create />} />
+          <Route path="/review/:id" element={<Movie />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />
