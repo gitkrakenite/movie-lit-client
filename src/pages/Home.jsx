@@ -1,12 +1,16 @@
 import Masonry from "react-masonry-css";
 import {
   AiOutlineArrowUp,
+  AiOutlineComment,
   AiOutlinePlus,
   AiOutlineSearch,
 } from "react-icons/ai";
 import { BsArrowUpRightCircle } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { DummyMovies, SingleDummy } from "../dummyData";
+import Spinner from "../components/Spinner";
+import "./home.css";
 
 const Home = () => {
   const breakpointColumnsObj = {
@@ -40,6 +44,36 @@ const Home = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // search  states
+  const [searchText, setSearchText] = useState("");
+  const [searchTimeout, setsearchTimeout] = useState(null);
+  const [searchedResults, setSearchedResults] = useState(null);
+
+  // search user func
+  const handleSearchChange = async (e) => {
+    e.preventDefault();
+    clearTimeout(setsearchTimeout);
+
+    setSearchText(e.target.value);
+    // console.log(searchText);
+
+    handleScrollTop();
+
+    setsearchTimeout(
+      setTimeout(() => {
+        const searchResults = DummyMovies?.filter(
+          (item) =>
+            item.title.toLowerCase().includes(searchText.toLowerCase()) ||
+            item.category.toLowerCase().includes(searchText.toLowerCase())
+        );
+
+        setSearchedResults(searchResults);
+      }, 500)
+    );
+  };
+
+  const [loading, setLoading] = useState("");
+
   return (
     <div>
       {/* wrapper */}
@@ -52,10 +86,10 @@ const Home = () => {
         </div>
       )}
       {/*  */}
-      <div className="pt-[1px] px-[8px]  lg:px-[5em]">
+      <div className="pt-[5px] px-[8px]  lg:px-[1em]  xl:px-[5em]">
         {/* topbar */}
         <div
-          className="fixed top-0 left-0 w-full z-[999] py-[10px] px-[8px]  lg:px-[5em]"
+          className="fixed top-0 left-0 w-full z-[999] py-[15px] px-[8px]  lg:px-[5em]"
           style={{
             background: "rgba(12, 7, 7, 0.9)",
             backdropFilter: "blur(4px)",
@@ -114,9 +148,11 @@ const Home = () => {
                   type="text"
                   name="search"
                   id="search"
-                  placeholder="Search"
+                  placeholder="Search Anything"
                   required
                   className="bg-transparent w-full border-none outline-none"
+                  value={searchText}
+                  onChange={handleSearchChange}
                 />
               </form>
             </div>
@@ -125,37 +161,114 @@ const Home = () => {
         </div>
         {/* masonry data */}
         <div className="mt-[70px]">
-          <img
-            src="https://images.pexels.com/photos/3637653/pexels-photo-3637653.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-            alt=""
-            className="h-[400px] object-contain py-[20px]"
-          />
-          <img
-            src="https://images.pexels.com/photos/3637653/pexels-photo-3637653.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-            alt=""
-            className="h-[400px] object-contain py-[20px]"
-          />
-          <img
-            src="https://images.pexels.com/photos/3637653/pexels-photo-3637653.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-            alt=""
-            className="h-[400px] object-contain py-[20px]"
-          />
-          <img
-            src="https://images.pexels.com/photos/3637653/pexels-photo-3637653.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-            alt=""
-            className="h-[400px] object-contain py-[20px]"
-          />
-          <img
-            src="https://images.pexels.com/photos/3637653/pexels-photo-3637653.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-            alt=""
-            className="h-[400px] object-contain py-[20px]"
-          />
-          <img
-            src="https://images.pexels.com/photos/3637653/pexels-photo-3637653.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-            alt=""
-            className="h-[400px] object-contain py-[20px]"
-          />
+          <div>
+            {searchText ? (
+              <>
+                <div className="mb-[15px] text-orange-200 text-sm">
+                  {searchText && <p>Results For : {searchText} </p>}
+                </div>
+
+                {searchedResults?.length >= 1 ? (
+                  <>
+                    <div className="iframeWrapper ">
+                      {searchedResults?.map((item) => (
+                        <div key={item.id} className="iframeItem bg-zinc-900">
+                          <Link to={`/review/${item.id}`}>
+                            <div>
+                              <iframe
+                                className="w-full h-[400px] "
+                                src={item.iframeLink}
+                                title="Edge of Tomorrow - Official Main Trailer [HD]"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen
+                              ></iframe>
+                            </div>
+                            <div className="px-[3px] pb-[5px]">
+                              <div className="flex items-center justify-between">
+                                <p>
+                                  <span className="text-sm">Reposted</span> :{" "}
+                                  {item.creator}
+                                </p>
+                                <p>{item.createdAt}</p>
+                              </div>
+                              <div className="flex justify-between items-center mt-[10px]">
+                                <p className="text-sm  text-emerald-500 font-bold">
+                                  {item.title}
+                                </p>
+                                <div className="flex items-center gap-[10px]">
+                                  <AiOutlineComment className="text-xl" />
+                                  <p className="text-sm">
+                                    {item.comments.length}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-center mt-[10%] text-lg">
+                      😥oops no results for{" "}
+                      <span className="text-emerald-500">{searchText}</span>
+                    </p>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                {loading ? (
+                  <div className="mt-[5em]">
+                    <Spinner message="Fetching ..." />
+                  </div>
+                ) : (
+                  <div className="iframeWrapper ">
+                    {DummyMovies?.map((item) => (
+                      <div key={item.id} className="iframeItem bg-zinc-900">
+                        <Link to={`/review/${item.id}`}>
+                          <div>
+                            <iframe
+                              className="w-full h-[400px] "
+                              src={item.iframeLink}
+                              title="Edge of Tomorrow - Official Main Trailer [HD]"
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              allowfullscreen
+                            ></iframe>
+                          </div>
+                          <div className="px-[3px] pb-[5px]">
+                            <div className="flex items-center justify-between">
+                              <p>
+                                <span className="text-sm">Reposted</span> :{" "}
+                                {item.creator}
+                              </p>
+                              <p>{item.createdAt}</p>
+                            </div>
+                            <div className="flex justify-between items-center mt-[10px]">
+                              <p className="text-sm  text-emerald-500 font-bold">
+                                {item.title}
+                              </p>
+                              <div className="flex items-center gap-[10px]">
+                                <AiOutlineComment className="text-xl" />
+                                <p className="text-sm">
+                                  {item.comments.length}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
+        {/*  */}
       </div>
       {/*  */}
     </div>

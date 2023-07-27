@@ -1,0 +1,29 @@
+.iframeWrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 1200px) {
+  .iframeWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 960px) {
+  .iframeWrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 680px) {
+  .iframeWrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
