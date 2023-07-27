@@ -1,7 +1,67 @@
+import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "../axios";
+import Spinner from "../components/Spinner";
 
 const Create = () => {
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [iframeLink, setiframeLink] = useState("");
+  const [trailer, setTrailer] = useState("");
+  const [movieLink, setMovieLink] = useState("");
+
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (
+      !title ||
+      !iframeLink ||
+      !description ||
+      !category ||
+      !trailer ||
+      !movieLink
+    ) {
+      return toast.error("A value is missing. Check All Fields", {
+        theme: "dark",
+      });
+    }
+
+    try {
+      setLoading(true);
+      let creator = user?.username;
+      const reviewData = {
+        title,
+        iframeLink,
+        description,
+        category,
+        trailer,
+        movieLink,
+        creator,
+      };
+      const response = await axios.post("/scene", reviewData);
+      if (response) {
+        setLoading(false);
+        navigate("/home");
+      }
+    } catch (error) {
+      toast.error("Failed To Create Scene");
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       {/* wrapper */}
@@ -30,6 +90,11 @@ const Create = () => {
                 placeholder="movie name"
                 id="title"
                 className="w-full p-[5px] bg-transparent outline-none border-2 border-emerald-700 rounded-lg"
+                required
+                minLength={3}
+                maxLength={30}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-[10px] mb-[25px]">
@@ -46,11 +111,16 @@ const Create = () => {
                 rows="3"
                 placeholder="Scene description"
                 className="w-full p-[5px] bg-transparent outline-none border-2 border-emerald-700 rounded-lg"
+                required
+                minLength={5}
+                maxLength={200}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               ></textarea>
             </div>
             <div className="flex flex-col gap-[10px] mb-[25px]">
               <label htmlFor="category" className="text-zinc-400">
-                What Best Describes This Scene
+                Movie Genre / Category
                 <p className="text-sm mt-[3px]">
                   ** separate using spaces and commas ?{" "}
                 </p>
@@ -60,6 +130,11 @@ const Create = () => {
                 placeholder="i.e action, romance, anime"
                 id="category"
                 className="w-full p-[5px] bg-transparent outline-none border-2 border-emerald-700 rounded-lg"
+                required
+                minLength={3}
+                maxLength={100}
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-[10px] mb-[25px]">
@@ -74,6 +149,11 @@ const Create = () => {
                 placeholder="i.e https://www.youtube.com/embed/E3OZEu3Q6OM"
                 id="iframe"
                 className="w-full p-[5px] bg-transparent outline-none border-2 border-emerald-700 rounded-lg"
+                required
+                minLength={3}
+                maxLength={80}
+                value={iframeLink}
+                onChange={(e) => setiframeLink(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-[10px] mb-[25px]">
@@ -88,6 +168,11 @@ const Create = () => {
                 placeholder="i.e https://www.youtube.com/embed/E3OZEu3Q6OM"
                 id="trailerLink"
                 className="w-full p-[5px] bg-transparent outline-none border-2 border-emerald-700 rounded-lg"
+                required
+                minLength={3}
+                maxLength={30}
+                value={trailer}
+                onChange={(e) => setTrailer(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-[10px] mb-[25px]">
@@ -102,12 +187,24 @@ const Create = () => {
                 placeholder="i.e https://www.youtube.com/embed/E3OZEu3Q6OM"
                 id="movieLink"
                 className="w-full p-[5px] bg-transparent outline-none border-2 border-emerald-700 rounded-lg"
+                required
+                minLength={3}
+                maxLength={70}
+                value={movieLink}
+                onChange={(e) => setMovieLink(e.target.value)}
               />
             </div>
             <div>
-              <button className="bg-emerald-700 text-zinc-300 p-[8px] rounded-lg w-full">
-                Share This Scene
-              </button>
+              {loading ? (
+                <Spinner />
+              ) : (
+                <button
+                  className="bg-emerald-700 text-zinc-300 p-[8px] rounded-lg w-full"
+                  onClick={handleSubmit}
+                >
+                  Share This Scene
+                </button>
+              )}
             </div>
           </form>
         </div>
